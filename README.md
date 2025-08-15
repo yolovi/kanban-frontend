@@ -1,7 +1,5 @@
 ```
 └── 📁src                    // Raíz del frontend
-    ├── 📁store             // Configuración global de Redux Toolkit
-    │   └── store.js
     │
     ├── 📁assets            // Recursos estáticos, imágenes, iconos...
     │
@@ -28,6 +26,9 @@
     │   │   ├── authSlice.js //estado + reducer + acciones
     │   │   └── authService.js
     │   └──📁calendar
+    ├── 📁store             // Configuración global de Redux Toolkit
+    │   └── store.js
+    ├── 📁styles             // Configuración global de estilos css
     │
     ├── 📁hooks             // Hooks personalizados
     │   └── useAuth.js
