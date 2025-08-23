@@ -1,13 +1,14 @@
 // import KanbanColumn from "./KanbanColumn";
-import { useState } from "react";
-import initalBoard from "../data/mockKanbanData";
-import { Layout } from "antd";
+import { Button, Layout } from "antd";
 import KanbanColumn from "./KanbanColumn";
+import { useDispatch, useSelector } from "react-redux";
+import { addCard } from "../kanbanSlice";
 const { Header, Content } = Layout;
 
 const KanbanBoard = () => {
-  //TODO: cuando implemente Redux, cambias useState por useSelector.
-  const [board, setBoard] = useState(initalBoard);
+  // const [board, setBoard] = useState(initalBoard);
+  const board = useSelector((state) => state.kanban);
+  const dispatch = useDispatch();
 
   // Selecciona el primer board
   const currentBoard = board.boards[0];
@@ -25,36 +26,32 @@ const KanbanBoard = () => {
     return acc;
   }, {});
 
-  //---- addDummyCard: función temporal para comprobar useState
-  const addDummyCard = () => {
-    const newCard = {
-      id: Date.now(), // ID único temporal
-      boardId: currentBoard.id,
-      columnId: currentBoard.columnIds[0], // ejemplo: primera columna
-      title: "Nueva tarea",
-      description: "Descripción de prueba",
-      priority: "LOW",
-      orderIndex: cardsByColumn[currentBoard.columnIds[0]]?.length || 0,
-    };
-
-    setBoard((prev) => ({
-      ...prev,
-      cards: [...prev.cards, newCard],
-    }));
+  const handleAddCard = () => {
+    dispatch(
+      addCard({
+        id: Date.now(),
+        boardId: currentBoard.id,
+        columnId: currentBoard.columnIds[0],
+        title: "Card desde Redux",
+        description: "Prueba",
+        priority: "LOW",
+        orderIndex: cardsByColumn[currentBoard.columnIds[0]]?.length || 0,
+      })
+    );
   };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Header style={{ color: "#fff" }}>
         {currentBoard.name}
-        <button onClick={addDummyCard} style={{ marginLeft: 16 }}>
+        <Button onClick={handleAddCard} style={{ marginLeft: 16 }}>
           + Añadir card
-        </button>
+        </Button>
       </Header>
       <Content style={{ padding: 16 }}>
         <KanbanColumn
-          orderedColumns={orderedColumns}
-          cardsByColumn={cardsByColumn}
+          columns={orderedColumns}
+          cards={cardsByColumn}
         />
       </Content>
     </Layout>

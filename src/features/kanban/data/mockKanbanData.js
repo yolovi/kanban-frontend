@@ -3,10 +3,10 @@
 const mockBoardData = {
   boards: [{ id: 1, name: "Default Board", columnIds: [1, 2, 3, 4] }],
   columns: [
-    { id: 1, boardId: 1, name: "Backlog", order_index: 0, cardIds: [] },
-    { id: 2, boardId: 1, name: "To Do", order_index: 1, cardIds: [1, 2] },
-    { id: 3, boardId: 1, name: "In Progress", order_index: 2, cardIds: [3] },
-    { id: 4, boardId: 1, name: "Done", order_index: 3, cardIds: [] },
+    { id: 1, boardId: 1, name: "Backlog", orderIndex: 0, cardIds: [] },
+    { id: 2, boardId: 1, name: "To Do", orderIndex: 1, cardIds: [1, 2] },
+    { id: 3, boardId: 1, name: "In Progress", orderIndex: 2, cardIds: [3] },
+    { id: 4, boardId: 1, name: "Done", orderIndex: 3, cardIds: [] },
   ],
   cards: [
     {
@@ -17,7 +17,7 @@ const mockBoardData = {
       description: "Crear app React y API",
       priority: "HIGH",
       due_date: null,
-      order_index: 0,
+      orderIndex: 0,
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ const mockBoardData = {
       description: "Tablas y relaciones",
       priority: "MEDIUM",
       due_date: null,
-      order_index: 1,
+      orderIndex: 1,
     },
     {
       id: 3,
@@ -37,7 +37,7 @@ const mockBoardData = {
       description: "Probar movimientos",
       priority: "HIGH",
       due_date: null,
-      order_index: 0,
+      orderIndex: 0,
     },
   ],
 };

@@ -1,8 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit'
-import themeReducer from './slices/themeSlice'
+import { configureStore } from "@reduxjs/toolkit";
+import themeReducer from "./slices/themeSlice";
+import kanbanReducer from "../features/kanban/kanbanSlice"
 
 export const store = configureStore({
   reducer: {
-    theme: themeReducer
-  }
-})
+    theme: themeReducer,
+    kanban: kanbanReducer,
+  },
+});

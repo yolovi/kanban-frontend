@@ -1,12 +1,12 @@
 import { Col, Row } from "antd";
 import KanbanCard from "./KanbanCard";
 
-const KanbanColumn = ({ orderedColumns, cardsByColumn }) => {
+const KanbanColumn = ({ columns, cards }) => {
   return (
     <Row gutter={[16, 16]} wrap={false} style={{ overflowX: "auto" }}>
-      {orderedColumns.map((column) => (
+      {columns.map((column) => (
         <Col key={column.id} style={{ minWidth: 280 }}>
-          <KanbanCard cardsByColumn={cardsByColumn} column={column} />
+          <KanbanCard cards={cards} column={column} />
         </Col>
       ))}
     </Row>
