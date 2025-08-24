@@ -1,15 +1,32 @@
-import { Col, Row } from "antd";
+import { Card, Typography } from "antd";
 import KanbanCard from "./KanbanCard";
+import { useDroppable } from "@dnd-kit/core"; // Importar useDroppable
 
-const KanbanColumn = ({ columns, cards }) => {
+const { Title, Text } = Typography;
+
+const KanbanColumn = ({ column, cards }) => {
+  console.log(column.name);
+
+  // Configuración de dnd-kit para hacer la columna droppable
+  const { setNodeRef } = useDroppable({
+    id: column.id,
+  });
+
   return (
-    <Row gutter={[16, 16]} wrap={false} style={{ overflowX: "auto" }}>
-      {columns.map((column) => (
-        <Col key={column.id} style={{ minWidth: 280 }}>
-          <KanbanCard cards={cards} column={column} />
-        </Col>
-      ))}
-    </Row>
+    <div ref={setNodeRef} style={{ minWidth: 280, flexShrink: 0 }}>
+      <Card
+        title={
+          <Title level={5} style={{ margin: 0 }}>
+            {column.name}
+          </Title>
+        }
+        style={{ height: '100%'}}
+      >
+        {cards.map(card => {
+          return <KanbanCard key={card.id} card={card} />;
+        })}
+      </Card>
+    </div>
   );
 };
 

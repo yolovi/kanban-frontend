@@ -3,7 +3,8 @@ import { moveCard } from "../kanbanSlice";
 import { Button, Card, Space, Typography } from "antd";
 const { Title, Text } = Typography;
 
-const KanbanCard = ({ cards, column }) => {
+const KanbanCard = ({ card, column }) => {
+  console.log(card);
   const dispatch = useDispatch();
   const columns = useSelector((state) => state.kanban.columns);
 
@@ -20,45 +21,35 @@ const KanbanCard = ({ cards, column }) => {
     <Card
       title={
         <Title level={5} style={{ margin: 0 }}>
-          {column.name}
+          {card.title}
         </Title>
       }
       size="small"
     >
-      {(cards[column.id] || []).map((card) => (
-        <Card key={card.id} size="small" style={{ marginBottom: 8 }}>
-          <Text strong>{card.title}</Text>
-          <br />
-          <Text type="secondary">{card.description}</Text>
-          <br />
-          <Space>
-            <Button
-              size="small"
-              onClick={() => {
-                const target = getTargetColumn(column.id, "left");
-                if (target)
-                  dispatch(
-                    moveCard({ cardId: card.id, targetColumnId: target })
-                  );
-              }}
-            >
-              ←
-            </Button>
-            <Button
-              size="small"
-              onClick={() => {
-                const target = getTargetColumn(column.id, "right");
-                if (target)
-                  dispatch(
-                    moveCard({ cardId: card.id, targetColumnId: target })
-                  );
-              }}
-            >
-              →
-            </Button>
-          </Space>
-        </Card>
-      ))}
+      <Text type="secondary">{card.description}</Text>
+      <br />
+      <Space>
+        <Button
+          size="small"
+          onClick={() => {
+            const target = getTargetColumn(column.id, "left");
+            if (target)
+              dispatch(moveCard({ cardId: card.id, targetColumnId: target }));
+          }}
+        >
+          ←
+        </Button>
+        <Button
+          size="small"
+          onClick={() => {
+            const target = getTargetColumn(column.id, "right");
+            if (target)
+              dispatch(moveCard({ cardId: card.id, targetColumnId: target }));
+          }}
+        >
+          →
+        </Button>
+      </Space>
     </Card>
   );
 };

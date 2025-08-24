@@ -3,7 +3,10 @@ import { Button, Layout } from "antd";
 import KanbanColumn from "./KanbanColumn";
 import { useDispatch, useSelector } from "react-redux";
 import { addCard } from "../kanbanSlice";
+import { DndContext } from "@dnd-kit/core";
 const { Header, Content } = Layout;
+
+//FIXME: Mejorar kanboard para que haga el map de las columnas y no tener que hacerlo en el componente KanbanColum (que pinte una única columna)
 
 const KanbanBoard = () => {
   // const [board, setBoard] = useState(initalBoard);
@@ -12,19 +15,21 @@ const KanbanBoard = () => {
 
   // Selecciona el primer board
   const currentBoard = board.boards[0];
-  console.log(currentBoard);
+  // const currentBoard = board.boards.find((b) => b.id === boardId);
 
   // Columnas en el orden definido por `columnIds`
   const orderedColumns = currentBoard.columnIds
-    .map((colId) => board.columns.find((c) => c.id === colId)) // buscamos la columna
+    .map((colId) => board.columns.find((col) => col.id === colId)) // buscamos la columna
     .filter(Boolean); // eliminamos posibles null/undefined
 
+  console.log(orderedColumns);
+
   // Cards agrupadas por columna
-  const cardsByColumn = board.cards.reduce((acc, card) => {
-    if (!acc[card.columnId]) acc[card.columnId] = [];
-    acc[card.columnId].push(card);
-    return acc;
-  }, {});
+  // const cardsByColumn = board.cards.reduce((acc, card) => {
+  //   if (!acc[card.columnId]) acc[card.columnId] = [];
+  //   acc[card.columnId].push(card);
+  //   return acc;
+  // }, {});
 
   const handleAddCard = () => {
     dispatch(
@@ -49,10 +54,26 @@ const KanbanBoard = () => {
         </Button>
       </Header>
       <Content style={{ padding: 16 }}>
-        <KanbanColumn
-          columns={orderedColumns}
-          cards={cardsByColumn}
-        />
+        <div
+          style={{
+            display: "flex",
+            overflowX: "auto",
+            gap: 16,
+            height: "100%",
+          }}
+        >
+          {" "}
+          {orderedColumns.map((col) => {
+            return (
+              <KanbanColumn
+                key={col.id}
+                column={col}
+                cards={board.cards.filter((card) => card.columnId === col.id)}
+              />
+            );
+          })}
+          {/* <KanbanColumn columns={orderedColumns} cards={cardsByColumn} /> */}
+        </div>
       </Content>
     </Layout>
   );
