@@ -1,17 +1,22 @@
 // import KanbanColumn from "./KanbanColumn";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  DndContext,
+  useSensors,
+  useSensor,
+  PointerSensor,
+} from "@dnd-kit/core";
 import { Button, Layout } from "antd";
 import KanbanColumn from "./KanbanColumn";
-import { useDispatch, useSelector } from "react-redux";
-import { addCard } from "../kanbanSlice";
-import { DndContext } from "@dnd-kit/core";
+import { addCard, moveCard } from "../kanbanSlice";
 const { Header, Content } = Layout;
 
 //FIXME: Mejorar kanboard para que haga el map de las columnas y no tener que hacerlo en el componente KanbanColum (que pinte una única columna)
 
 const KanbanBoard = () => {
   // const [board, setBoard] = useState(initalBoard);
-  const board = useSelector((state) => state.kanban);
   const dispatch = useDispatch();
+  const board = useSelector((state) => state.kanban);
 
   // Selecciona el primer board
   const currentBoard = board.boards[0];
@@ -24,12 +29,69 @@ const KanbanBoard = () => {
 
   console.log(orderedColumns);
 
-  // Cards agrupadas por columna
-  // const cardsByColumn = board.cards.reduce((acc, card) => {
-  //   if (!acc[card.columnId]) acc[card.columnId] = [];
-  //   acc[card.columnId].push(card);
-  //   return acc;
-  // }, {});
+  // Configura los sensores para que funcionen con el mouse y el tacto en móviles.
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Sensibilidad al arrastrar para evitar conflictos con el scroll
+      },
+    })
+  );
+
+  // Lógica de movimiento de tarjetas
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    console.log(event);
+    console.log(over);
+
+    if (!over) {
+      return; // No se soltó en un droppable
+    }
+
+    const cardId = active.id;
+    const sourceColumnId = active.data.current.columnId;
+
+    let targetColumnId = null;
+    if (over.data.current) {
+      // Si intentas soltar sobre otra card devuelve a la columna de origen
+      targetColumnId = over.data.current.columnId;
+    } else {
+      // Soltar en otra columna (over.id es el ID del contenedor droppable --> columna)
+      targetColumnId = over.id;
+    }
+
+    if (sourceColumnId !== targetColumnId) {
+      // Optimistic UI Update (Actualización del estado local)
+      dispatch(moveCard({ cardId, sourceColumnId, targetColumnId }));
+
+      // A. Reordenar en la misma columna
+      if (sourceColumnId === targetColumnId) {
+        // Logic for reordering cards within a single column
+        // This will be handled by the @dnd-kit/sortable library.
+        // For a basic setup, you might not even need to write this logic here
+        // if you're only focused on moving between columns.
+        console.log("Reordering within the same column");
+        return;
+      }
+
+      // B. Mover a otra columna
+      if (sourceColumnId !== targetColumnId) {
+        // This is where you would dispatch your Redux action
+        console.log(
+          `Moving card ${cardId} from column ${sourceColumnId} to ${targetColumnId}`
+        );
+        // dispatch(moveCard({ cardId: cardId, sourceColumnId, targetColumnId }));
+        // Your API call would follow the dispatch.
+        // Llamada a la API con Axios
+        // axios.patch(`/api/cards/${cardId}`, { newColumnId: targetColumnId })
+        //   .catch(error => {
+        //     console.error('API call failed, reverting changes');
+        //     // Opcional: Revertir la acción de Redux si la llamada falla
+        //     dispatch(revertMove());
+        //   });
+      }
+    }
+  };
 
   const handleAddCard = () => {
     dispatch(
@@ -40,7 +102,6 @@ const KanbanBoard = () => {
         title: "Card desde Redux",
         description: "Prueba",
         priority: "LOW",
-        orderIndex: cardsByColumn[currentBoard.columnIds[0]]?.length || 0,
       })
     );
   };
@@ -53,28 +114,29 @@ const KanbanBoard = () => {
           + Añadir card
         </Button>
       </Header>
-      <Content style={{ padding: 16 }}>
-        <div
-          style={{
-            display: "flex",
-            overflowX: "auto",
-            gap: 16,
-            height: "100%",
-          }}
-        >
-          {" "}
-          {orderedColumns.map((col) => {
-            return (
-              <KanbanColumn
-                key={col.id}
-                column={col}
-                cards={board.cards.filter((card) => card.columnId === col.id)}
-              />
-            );
-          })}
-          {/* <KanbanColumn columns={orderedColumns} cards={cardsByColumn} /> */}
-        </div>
-      </Content>
+      <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+        <Content style={{ padding: 16 }}>
+          <div
+            style={{
+              display: "flex",
+              overflowX: "auto",
+              gap: 16,
+              height: "100%",
+            }}
+          >
+            {" "}
+            {orderedColumns.map((col) => {
+              return (
+                <KanbanColumn
+                  key={col.id}
+                  column={col}
+                  cards={board.cards.filter((card) => card.columnId === col.id)}
+                />
+              );
+            })}
+          </div>
+        </Content>
+      </DndContext>
     </Layout>
   );
 };

@@ -10,11 +10,11 @@ const kanbanSlice = createSlice({
       console.log(action);
     },
     moveCard: (state, action) => {
-      const { cardId, targetColumnId, newIndex } = action.payload;
-      const card = state.cards.find((c) => c.id === cardId);
-      if (card) {
-        card.columnId = targetColumnId;
-        card.orderIndex = newIndex;
+      const { cardId, sourceColumnId, targetColumnId } = action.payload;
+      const cardToMove = state.cards.find((card) => card.id === cardId);
+
+      if (cardToMove) {
+        cardToMove.columnId = targetColumnId;
       }
     },
     // Añadir más reducers: updateCard, deleteCard, addColumn...
