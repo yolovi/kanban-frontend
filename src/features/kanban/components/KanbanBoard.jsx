@@ -1,17 +1,20 @@
 // import KanbanColumn from "./KanbanColumn";
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import {
   DndContext,
   useSensors,
   useSensor,
   PointerSensor,
+  DragOverlay,
 } from "@dnd-kit/core";
 import { Button, Layout } from "antd";
 import KanbanColumn from "./KanbanColumn";
 import { addCard, moveCard } from "../kanbanSlice";
+import KanbanCardOverlay from "./KanbanCardOverlay";
 const { Header, Content } = Layout;
 
-//FIXME: Mejorar kanboard para que haga el map de las columnas y no tener que hacerlo en el componente KanbanColum (que pinte una única columna)
+// FIXME: Limpiar código.
 
 const KanbanBoard = () => {
   // const [board, setBoard] = useState(initalBoard);
@@ -38,9 +41,17 @@ const KanbanBoard = () => {
     })
   );
 
+  const [activeCardId, setActiveCardId] = useState(null);
+
+  const handleDragStart = (event) => {
+    setActiveCardId(event.active.id);
+  };
+
   // Lógica de movimiento de tarjetas
   const handleDragEnd = (event) => {
+    setActiveCardId(null);
     const { active, over } = event;
+
     console.log(event);
     console.log(over);
 
@@ -106,6 +117,8 @@ const KanbanBoard = () => {
     );
   };
 
+  const activeCard = board.cards.find((card) => card.id === activeCardId);
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Header style={{ color: "#fff" }}>
@@ -114,7 +127,11 @@ const KanbanBoard = () => {
           + Añadir card
         </Button>
       </Header>
-      <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+      <DndContext
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        sensors={sensors}
+      >
         <Content style={{ padding: 16 }}>
           <div
             style={{
@@ -131,11 +148,16 @@ const KanbanBoard = () => {
                   key={col.id}
                   column={col}
                   cards={board.cards.filter((card) => card.columnId === col.id)}
+                  activeCardId={activeCardId}
                 />
               );
             })}
           </div>
         </Content>
+        {/* Renderiza el overlay con el contenido de la tarjeta activa */}
+        <DragOverlay>
+          <KanbanCardOverlay card={activeCard} />
+        </DragOverlay>
       </DndContext>
     </Layout>
   );

@@ -4,7 +4,7 @@ import { useDroppable } from "@dnd-kit/core"; // Importar useDroppable
 
 const { Title } = Typography;
 
-const KanbanColumn = ({ column, cards }) => {
+const KanbanColumn = ({ column, cards, activeCardId  }) => {
   // Configuración de dnd-kit para hacer la columna droppable
   const { setNodeRef } = useDroppable({
     id: column.id,
@@ -30,7 +30,10 @@ const KanbanColumn = ({ column, cards }) => {
         style={{ height: "100%" }}
       >
         {cards.map((card) => {
-          return <KanbanCard key={card.id} card={card} />;
+          const isDragging = card.id === activeCardId; // Comprueba si esta tarjeta es la activa
+          return (
+            <KanbanCard key={card.id} card={card} isDragging={isDragging} />
+          );
         })}
       </Card>
     </div>
