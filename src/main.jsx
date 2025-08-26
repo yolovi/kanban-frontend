@@ -8,7 +8,7 @@ import App from "./app/App.jsx";
 // import "./index.css";
 // Estilos globales
 import "antd/dist/reset.css";
-import "./core/styles/_reset.css";
+// import "./core/styles/_reset.css";
 // import "./styles/variables.css";
 // import "./styles/global.css";
 

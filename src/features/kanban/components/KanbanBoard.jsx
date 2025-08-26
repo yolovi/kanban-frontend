@@ -15,6 +15,7 @@ import KanbanCardOverlay from "./KanbanCardOverlay";
 const { Header, Content } = Layout;
 
 // FIXME: Limpiar código.
+// TODO: para mejorar la UX, puedes añadir cursor: grab y cursor: grabbing a las tarjetas al arrastrar.
 
 const KanbanBoard = () => {
   // const [board, setBoard] = useState(initalBoard);
